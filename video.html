@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <style type="text/css">
+            button{
+                min-width:250px;
+                margin:5px;
+            }
+        </style>
+    </head>
+    <body onload="loadVids()">
+        <h1>Results
+        </h1>
+        <p><a href="index.html">Back</a></p>
+        <div >
+            <video id="player" width="640" height="480" controls="controls">
+            </video>
+        </div>
+        <div id="res"> </div>
+    </body>
+    <script>
+    
+    function loadVids(){
+        let val = 'action=' + encodeURIComponent("getResVideo");
+        var http = new XMLHttpRequest();
+        var url = "server.py";
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                var d = document.getElementById("res");
+                d.innerHTML = http.responseText;
+            } 
+        }
+        http.send(val);
+    }
+    
+    function del(el)
+    {
+        let val = 'action=' + encodeURIComponent("delete");
+        val += '&file=' + encodeURIComponent(el.id);
+        sendRequest(val);
+        loadVids();
+    }
+    
+    function sendRequest(val){
+        var http = new XMLHttpRequest();
+        var url = "server.py";
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+            } 
+        }
+        http.send(val);
+    }
+    
+    function show(el){
+        var d = document.getElementById("player");
+        d.src = el.id;
+    }
+    </script>
+</html>
+

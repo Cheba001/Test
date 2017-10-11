@@ -1,0 +1,463 @@
+<html>
+    <head>
+        <meta http-equiv="Cache-Control" content="no-cache">
+        <style>
+            td{
+                text-align: center;
+            }
+            button{
+                margin:1px;
+                width: 100px;
+                height: 50px;
+            }
+            
+            input{
+                margin: 2px;
+            }
+            
+            #videoTime{
+                width: 50px;
+            }
+            
+            .show{
+                transition-duration: 0.1s;
+                opacity: 1;
+            }
+            
+            .hide{
+                transition-duration: 0.3s;
+                opacity: 0;
+            }
+            
+            #mainDiv{  
+                position: relative; 
+                vertical-align: top;
+            }
+            
+            #imgDivAdd{
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+               
+            }
+            #imgDiv{
+                position: relative;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+            
+            img{
+                position: relative;
+            }
+            
+            .led{
+                width: 20px;
+                height: 20px;
+                border-radius: 10px;
+            }
+            
+            .ledPush{
+                width: 100px;
+                height: 100px;
+                border-radius: 30px
+            }
+            
+            
+        </style>
+    <head>
+    
+    <body>
+        <div align="center">
+            <table id="main" border=1>
+                <tr>
+                    <td>Video:</td>
+                    <td>Controls:</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="mainDiv">
+                            <div class="Img" id="imgDiv">
+                                <img src="preview.jpg" width="320" height="240"></img>
+                            </div>    
+                            <div class="Img" id="imgDivAdd">
+                            </div>
+                        </div>
+                        <hr>
+                        <div style="text-align: left;">
+                            <button onclick="onStatus()"> Status</button> Auto render <input type="checkbox" onclick="checkRender(this)" checked="checked"><br>
+                            Status:<br>
+                            Camera On:  <button class="led" id="statusOn"></button><br>
+                            Preview On: <button class="led" id="statusPreviewOn"></button><br>
+                            Video On:   <button class="led" id="statusVideoOn"></button> <input id="statusRecLost" style="border: 0px;"> </input><br>
+                        <div>
+                        <hr>
+                        Zoom:<br>
+                        <table>
+                           <tr>
+                               <td><button id="1" onclick="zoom(this)">+ 1</button></td>
+                               <td><button id="2" onclick="zoom(this)">+ 2</button></td>
+                           </tr>
+                           <tr>
+                               <td colspan="2"><button id="5" onclick="zoom(this)">+ 5</button></td>
+                           </tr>
+                           <tr>
+                               <td><button id="3" onclick="zoom(this)">+ 3</button></td>
+                               <td><button id="4" onclick="zoom(this)">+ 4</button></td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <div style="border:1px solid black; width:100px; height:100px;">
+                                       <div id="zoomDiv" style="border:1px solid red; width:100px; height:100px;">
+                                       </div>
+                                   </div>
+                               </td>
+                               <td><button id ="0" onclick="zoom(this)">Default</button></td>
+                           </tr>
+                        </table>
+                    </td>
+                    <td style="vertical-align: top" rowspan="2">
+                        <table id="controls">
+                            <tr>
+                                <div>
+                                    <div>
+                                        <button onclick="onStartPreview()"> Start preview</button>
+                                        <button onclick="onStopPreview()"> Stop preview </button>
+                                        <button onclick="onPhoto()"> Photo </button>
+                                        <hr>
+                                        Time: <input id="videoTime" value="60"> </input>  
+                                        <button onclick="onVideo()"> Video </button>  
+                                        <hr>
+                                            <button id="spyVideo" onclick="spyVideo()" class="ledPush">SPY!</button>
+                                            <button id="spyPhoto" onclick="spyPhoto()" class="ledPush">SPY PHOTO!</button>
+                                        <hr>
+                                        <table border="0">
+                                            <tr>
+                                                <td> Resolution: </td>
+                                                <td>
+                                                    <input size="4" id="widthRe" value="1640"></input> 
+                                                    <input size="4" id="heightRe" value="1232"></input> 
+                                                    <button onclick="setResolution()">Set resolution</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td> Hor flip: </td>
+                                                <td> <input type="checkbox" id="hflip"></input>  </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Ver flip:</td>
+                                                <td><input type="checkbox" id="vflip"></input></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Brightness</td>
+                                                <td><input id="brightness" type="range" min="0" max="100" step="1" value="50"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Exposure</td>
+                                                <td><input id="exposure_compensation" type="range" min="0" max="100" step="1" value="50"></td>
+                                            </tr>
+                                           <!-- <tr>
+                                                <td>ISO</td>
+                                                <td>100, 200, 320, 400, 500, 640, 800
+                                                </td>
+                                            </tr>-->
+                                            <tr>
+                                                <td>Saturation(насыщ)</td>
+                                                <td><input id="saturation" type="range" min="-100" max="100" step="1" value="0"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Sharpness(резк)</td>
+                                                <td><input id="sharpness" type="range" min="-100" max="100" step="1" value="0"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"><button onclick="onSettings()"> Set settings </button> </td>
+                                            </tr>
+                                            <tr>
+                                                <td><hr><a href="res.html" target="_blank">Results Photo</a></td>
+                                                <td><hr><a href="video.html" target="_blank">Results Video</a></td>
+                                            </tr>
+                                            <br>
+                                        </table>
+                                    </div>
+                                </div>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+<script>
+     var autoCheckedID = 0;
+    
+    function paintButton(id,val){
+        var el =  document.getElementById(id);
+        if (val == 0) { el.style.backgroundColor = '#ff9999'; }
+        else          { el.style.backgroundColor = '#99ff99'; }
+    }
+    
+    function Zoom(){
+        var self = this;
+        self.x = 0.0;
+        self.y = 0.0;
+        self.w = 1.0;
+        self.h = 1.0;
+        self.width  = function(){ return self.w - self.x;}
+        self.height = function(){ return self.h - self.y;}
+        self.sendToCam = function(){
+            let str = 'action=' + encodeURIComponent("zoom");
+            str += '&x=' + encodeURIComponent(self.x);
+            str += '&y=' + encodeURIComponent(self.y);
+            str += '&w=' + encodeURIComponent(self.w);
+            str += '&h=' + encodeURIComponent(self.h);
+            sendRequest(str);
+        } 
+        self.render = function(){
+            zoomDiv = document.getElementById('zoomDiv');
+            zoomDiv.style.width  = 100 * (self.w - self.x);
+            zoomDiv.style.height = 100 * (self.h - self.y);
+            zoomDiv.style.marginLeft = self.x * 100;
+            zoomDiv.style.marginTop  = self.y * 100;
+        }
+        self.zoom = function(id){
+            if (id == 0){
+                self.x = 0.0;
+                self.y = 0.0;
+                self.w = 1.0;
+                self.h = 1.0;
+            } else if (id == 1){
+                self.w = self.w - self.width()/2;
+                self.h = self.h - self.height()/2;
+            } else if (id == 2){
+                self.x = self.x + self.width()/2;
+                self.h = self.h - self.height()/2;
+            } else if (id == 3){
+                self.y = self.y + self.height()/2;
+                self.w = self.w - self.width()/2;
+            } else if (id == 4){
+                self.x = self.x + self.width()/2;
+                self.y = self.y + self.height()/2;
+            } else{
+                var x = self.x + self.width()/4;
+                var y = self.y + self.height()/4;
+                var w = self.w - self.width()/4;
+                var h = self.h - self.height()/4;
+                self.x = x;
+                self.y = y;
+                self.w = w;
+                self.h = h;
+            }
+            self.render();
+            self.sendToCam();
+        }
+    }
+    
+    function checkRender(el){
+        if (el.checked){
+            autoCheckedID = window.setInterval(onStatus, 2000);
+        }
+        else{
+            clearInterval(autoCheckedID);
+        }
+    }
+    
+    function Spy()
+    {   
+        var self = this;
+        self.video = false;
+        self.photo = false;
+        self.intervalVideo = 0;
+        self.intervalPhoto = 0;
+        
+        self.spyVideo = function(){
+            if (self.video){
+                self.video = false;
+                clearInterval(self.intervalVideo);
+            }
+            else{
+                self.video = true;
+                self.intervalVideo = window.setInterval(onVideo, 62000);
+                document.getElementById("videoTime").value = 60; 
+                onVideo();
+            }
+            self.paint();
+        }
+        self.spyPhoto = function(){
+            if (self.photo){
+                self.photo = false;
+                clearInterval(self.intervalPhoto);
+            }
+            else{
+                self.photo = true;
+                self.intervalPhoto = window.setInterval(onPhoto, 1000);
+            }
+            self.paint();
+        }
+        self.paint = function(){
+            paintButton("spyVideo", self.video);
+            paintButton("spyPhoto", self.photo);
+        }   
+    }
+    
+    function ImgObserver()
+    {
+        var self = this;
+        self.cont0 = document.getElementById('imgDiv');
+        self.cont1 = document.getElementById('imgDivAdd');
+        self.state = 0;
+        self.intervalID = 0;
+        self.query = 0;
+        self.lastPhoto = "";
+        
+        self.newPhoto = function(){
+            if (self.seintervalID != 0)
+                window.setTimeout(onStatus,1000);
+        }
+                
+        self.loadImg = function(){
+            if (self.query == 0)
+            { 
+                var pre = '<img src="';
+                pre += self.lastPhoto;
+                pre += '?img';
+                var img_tag = pre + Math.random(0,100)+ '" width="320" height="240"  onload="g_imgObs.imgLoaded(this)"/>';
+                if (self.state == 0){
+                    self.cont1.innerHTML = img_tag;
+                }
+                else{
+                    self.cont0.innerHTML = img_tag;
+                }   
+                self.query = 1;
+            }
+        }
+        
+        self.imgLoaded =  function(img){
+            self.query = 0;
+            self.change();
+        }
+        
+        self.startRender = function(time){
+            self.lastPhoto = "preview.jpg"
+            self.intervalID = window.setInterval(self.loadImg, 300);
+        }
+        
+        self.stopRender = function(){
+            clearInterval(self.intervalID);
+        }
+        
+        self.change = function(){
+            if (self.state == 0){
+                self.cont0.className = "hide";
+                self.cont1.className = "show";
+                self.state = 1; 
+            }
+            else{
+                self.cont1.className = "hide";
+                self.cont0.className = "show";
+                self.state = 0;
+            }     
+        }
+    }
+    
+    //GLOBAL_____________
+    var g_imgObs = new ImgObserver();
+    var g_zoom   = new Zoom();
+    var g_spy    = new Spy();
+    autoCheckedID = window.setInterval(onStatus, 2000);
+    
+    function spyVideo(){ g_spy.spyVideo();}
+    function spyPhoto(){ g_spy.spyPhoto(); }
+    
+    function zoom(el){
+        g_zoom.zoom(el.id);
+    }
+    
+
+    
+    function onStatus()
+    {
+        let str = 'action=' + encodeURIComponent("status");
+        var http = new XMLHttpRequest();
+        var url = "server.py";
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                var json = JSON.parse(http.responseText);
+                paintButton("statusOn",       json.statusOn);
+                paintButton("statusPreviewOn",json.statusPreviewOn);
+                let t = parseInt(json.statusRecLost);
+                if (t>0)
+                    paintButton("statusVideoOn", 1);
+                else
+                    paintButton("statusVideoOn", 0);
+                document.getElementById("statusRecLost").value =  json.statusRecLost + " s";
+                if (g_imgObs.lastPhoto != json.lastPhoto)
+                {
+                    g_imgObs.lastPhoto = json.lastPhoto;
+                    g_imgObs.loadImg();
+                }
+            } 
+        }
+        http.send(str);
+    }
+       
+    function onStartPreview(){
+        let str = 'action=' + encodeURIComponent("start");
+        sendRequest(str);
+        g_imgObs.startRender(1000);
+    }
+    
+    function onStopPreview(){
+        let str = 'action=' + encodeURIComponent("stop");
+        sendRequest(str);
+        g_imgObs.stopRender();
+    }
+    
+    function onPhoto(){
+        let str = 'action=' + encodeURIComponent("photo");
+        sendRequest(str);
+        g_imgObs.newPhoto();
+    }
+    
+    function onVideo(){
+        let time = document.getElementById("videoTime").value; 
+        let str = 'action=' + encodeURIComponent("video") + "&time=" + encodeURIComponent(time);
+        sendRequest(str);
+    }
+    
+    function setResolution(){
+        let str = 'action=' + encodeURIComponent("setResolution");  
+        str += '&widthRe=' + encodeURIComponent(document.getElementById("widthRe").value);
+        str += '&heightRe=' + encodeURIComponent(document.getElementById("heightRe").value);
+        sendRequest(str);
+    }
+    
+    function onSettings(){
+        let str = 'action=' + encodeURIComponent("set");
+        str += '&vflip=' + encodeURIComponent(document.getElementById("vflip").checked);
+        str += '&hflip=' + encodeURIComponent(document.getElementById("hflip").checked);
+        str += '&brightness=' + encodeURIComponent(document.getElementById("brightness").value);
+        str += '&exposure_compensation=' + encodeURIComponent(document.getElementById("exposure_compensation").value);
+        str += '&saturation=' + encodeURIComponent(document.getElementById("saturation").value);
+        str += '&sharpness=' + encodeURIComponent(document.getElementById("sharpness").value);
+       // alert(str);
+        sendRequest(str);
+    }
+    
+    function sendRequest(val){
+        var http = new XMLHttpRequest();
+        var url = "server.py";
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+            } 
+        }
+        http.send(val);
+    }
+</script>
+</html>
+
+
