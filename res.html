@@ -1,0 +1,48 @@
+<html>
+    <head>
+    </head>
+    <body onload="loadImgs()">
+        <h1>Results
+        </h1>
+        <p><a href="index.html">Back</a></p>
+        <div id="res"> </div>
+    </body>
+    <script>
+    
+    function loadImgs(){
+        let val = 'action=' + encodeURIComponent("getResPhoto");
+        var http = new XMLHttpRequest();
+        var url = "server.py";
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+                var d = document.getElementById("res");
+                d.innerHTML = http.responseText;
+            } 
+        }
+        http.send(val);
+    }
+    
+    function del(el)
+    {
+        let val = 'action=' + encodeURIComponent("delete");
+        val += '&file=' + encodeURIComponent(el.id);
+        sendRequest(val);
+        loadImgs();
+    }
+    
+    function sendRequest(val){
+        var http = new XMLHttpRequest();
+        var url = "server.py";
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function() {
+            if(http.readyState == 4 && http.status == 200) {
+            } 
+        }
+        http.send(val);
+    }
+    </script>
+</html>
+
